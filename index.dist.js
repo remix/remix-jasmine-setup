@@ -1,5 +1,12 @@
 'use strict';
 
+if (!window.jasmine) {
+  throw new Error('Be sure Jasmine is loaded first. (https://github.com/jasmine/jasmine)');
+}
+if (!jasmine.Ajax) {
+  throw new Error('Be sure jasmine-ajax is loaded first. (https://github.com/jasmine/jasmine-ajax)');
+}
+
 // Prevent creating dependencies by randomizing tests.
 jasmine.getEnv().randomizeTests(true);
 
@@ -43,17 +50,6 @@ window.cancelAnimationFrame = function (id) {
   return window.clearTimeout(id);
 };
 
-// Always use promise-polyfill (which uses setTimeout), so we don't get
-// asynchronous behaviour from promises.
-var PromiseThatUsesSetTimeoutInternally = require('promise-polyfill');
-window.Promise = PromiseThatUsesSetTimeoutInternally;
-// Make sure that we don't load in some other promise library.
-afterEach(function () {
-  if (window.Promise !== PromiseThatUsesSetTimeoutInternally) {
-    fail('window.Promise has been changed after running remix-jasmine-setup. Make sure your polyfills do not overwrite window.Promise');
-  }
-});
-
 // There is no asynchronous behaviour any more, because we use jasmine.clock(),
 // so set the timeout interval really tight.
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 10; // milliseconds
@@ -65,7 +61,6 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // Set up jasmine.Ajax.
-require('jasmine-ajax');
 jasmine.Ajax.install();
 
 // Set up error catching for thrown errors, console.error, and console.warn.
@@ -185,6 +180,18 @@ afterEach(function () {
   }
   if (document.body.childElementCount !== numberOfElementsInBody) {
     fail('Expected <body> to contain only ' + numberOfElementsInBody + ' elements ' + ('but it contained ' + document.body.childElementCount + '. Forgot to clean up?'));
+  }
+
+  // Make sure a good Promise polyfill/library is used.
+  var promiseResolved = false;
+  new window.Promise(function (resolve) {
+    resolve();
+  }).then(function () {
+    return promiseResolved = true;
+  });
+  jasmine.clock().tick(1);
+  if (!promiseResolved) {
+    fail('window.Promise does not get resolved when calling `jasmine.clock.tick(1)`, be sure to use a Promise polyfill that uses setTimeout like https://github.com/taylorhakes/promise-polyfill, and load it after loading remix-jasmine-setup.');
   }
 });
 

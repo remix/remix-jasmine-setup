@@ -1,6 +1,10 @@
 # Remix's Jasmine setup
+[![NPM version](https://badge.fury.io/js/remix-jasmine-setup.svg)](http://badge.fury.io/js/remix-jasmine-setup)
+[![peerDependencies Status](https://david-dm.org/remix/remix-jasmine-setup/peer-status.svg)](https://david-dm.org/remix/remix-jasmine-setup?type=peer)
+[![devDependencies Status](https://david-dm.org/remix/remix-jasmine-setup/dev-status.svg)](https://david-dm.org/remix/remix-jasmine-setup?type=dev)
+[![Open Source Love](https://badges.frapsoft.com/os/mit/mit.svg?v=102)](https://github.com/ellerbrock/open-source-badge/)
 
-This is an opinionated setup for [Jasmine](https://jasmine.github.io/) developed at [Remix](https://remix.com).
+This is an opinionated setup for [Jasmine](https://jasmine.github.io/), developed at [Remix](https://remix.com).
 
 ## Usage
 Include this module at the top of your tests entry point (e.g. `tests.js`):
@@ -8,19 +12,18 @@ Include this module at the top of your tests entry point (e.g. `tests.js`):
 import 'remix-jasmine-setup';
 ```
 
+Be sure that at this point [`jasmine`](https://github.com/jasmine/jasmine) and [`jasmine-ajax`](https://github.com/jasmine/jasmine-ajax) have been loaded.
+
 You can also use the compiled [`index.dist.js`](index.dist.js) version, e.g. in a `<script>` tag.
 
 **IMPORTANT:** Make sure that this setup is included *before* any polyfills! Otherwise those polyfills may not get the
 stubbed handles to things like `window.setTimeout`. You might need to change your [Babel](https://babeljs.io/) setup to
 not include polyfills at compile-time, but instead include them manually *after* loading this setup.
 
-Promise libraries can be especially tricky, some polyfills will always overwrite `window.Promise`, so you'll have to
-put it back like this:
-```js
-const ExistingPromise = window.Promise;
-require('babel-polyfill');
-if (ExistingPromise) window.Promise = ExistingPromise;
-```
+Promise libraries can be especially tricky, as some of them use sophisticated methods to get really fast
+asynchronous behaviour. But this setup tries to avoid any asynchronous behaviour in tests, so it needs a
+Promise library that just uses `window.setTimeout` or so. We currently recommend using
+[`promise-polyfill`](https://github.com/taylorhakes/promise-polyfill).
 
 ## Features
 

@@ -1,6 +1,6 @@
 {
   "name": "remix-jasmine-setup",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "Jan Paul Posma <j@npaulpos.ma>",
   "main": "index.dist.js",
   "module": "index.js",
