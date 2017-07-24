@@ -1,9 +1,9 @@
 {
   "name": "remix-jasmine-setup",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "author": "Jan Paul Posma <j@npaulpos.ma>",
-  "main": "index.dist.js",
-  "module": "index.js",
+  "main": "index.js",
+  "module": "index.es6.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/remix/remix-jasmine-setup.git"
@@ -24,7 +24,7 @@
   "homepage": "https://github.com/remix/remix-jasmine-setup#readme",
   "scripts": {
     "lint": "eslint .",
-    "build": "babel index.js > index.dist.js",
+    "build": "babel index.es6.js > index.js",
     "prepublishOnly": "npm run lint && npm run build"
   },
   "peerDependencies": {

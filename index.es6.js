@@ -1,10 +1,12 @@
-'use strict';
-
 if (!window.jasmine) {
-  throw new Error('Be sure Jasmine is loaded first. (https://github.com/jasmine/jasmine)');
+  throw new Error(
+    'Be sure Jasmine is loaded first. (https://github.com/jasmine/jasmine)'
+  );
 }
 if (!jasmine.Ajax) {
-  throw new Error('Be sure jasmine-ajax is loaded first. (https://github.com/jasmine/jasmine-ajax)');
+  throw new Error(
+    'Be sure jasmine-ajax is loaded first. (https://github.com/jasmine/jasmine-ajax)'
+  );
 }
 
 // Prevent creating dependencies by randomizing tests.
@@ -17,9 +19,9 @@ jasmine.MAX_PRETTY_PRINT_DEPTH = 5;
 jasmine.MAX_PRETTY_PRINT_ARRAY_LENGTH = 10;
 
 // Generate our own seed so we can print it in the console, for CI debugging.
-var seed = jasmine.getEnv().seed() || String(Math.random()).slice(-5); // Same seed function as Jasmine.
+const seed = jasmine.getEnv().seed() || String(Math.random()).slice(-5); // Same seed function as Jasmine.
 jasmine.getEnv().seed(seed);
-console.log('Jasmine seed used: ' + seed);
+console.log(`Jasmine seed used: ${seed}`);
 
 // Stub Date/setTimeout/setInterval. Has to happen outside of beforeEach, as
 // libraries might hold onto references, see e.g.:
@@ -33,29 +35,21 @@ jasmine.clock().install();
 // Therefore we change it to call window.setTimeout, which we have stubbed
 // above. Note that various async libraries rely on setImmediate, so you'll have
 // to use `jasmine.clock().tick(1)` when using them.
-window.setImmediate = function (fn) {
-  return window.setTimeout(fn, 0);
-};
-window.clearImmediate = function (id) {
-  return window.clearTimeout(id);
-};
+window.setImmediate = fn => window.setTimeout(fn, 0);
+window.clearImmediate = id => window.clearTimeout(id);
 
 // Similarly for requestAnimationFrame/cancelAnimationFrame, but set some delay
 // to prevent very long animations running all the way (it can be useful to have
 // to actually step through animations).
-window.requestAnimationFrame = function (fn) {
-  return window.setTimeout(fn, 1);
-};
-window.cancelAnimationFrame = function (id) {
-  return window.clearTimeout(id);
-};
+window.requestAnimationFrame = fn => window.setTimeout(fn, 1);
+window.cancelAnimationFrame = id => window.clearTimeout(id);
 
 // There is no asynchronous behaviour any more, because we use jasmine.clock(),
 // so set the timeout interval really tight.
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 10; // milliseconds
 
 // Override CSS that disables scrolling globally.
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', () => {
   document.documentElement.style.overflow = 'visible';
   document.body.style.overflow = 'scroll';
 });
@@ -64,36 +58,31 @@ document.addEventListener('DOMContentLoaded', function () {
 jasmine.Ajax.install();
 
 // Set up error catching for thrown errors, console.error, and console.warn.
-var caughtError = false;
-var oldOnError = window.onerror;
-window.onerror = function () {
-  for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-    args[_key] = arguments[_key];
-  }
-
+let caughtError = false;
+const oldOnError = window.onerror;
+window.onerror = (...args) => {
   caughtError = true;
   if (oldOnError) oldOnError.apply(window, args);
 };
 // Set up a dummy console so we're sure libraries and such will output their
 // errors and warnings.
 window.console = window.console || {};
-window.console.log = window.console.log || function () {};
-window.console.info = window.console.info || function () {};
-window.console.warn = window.console.warn || function () {};
-window.console.error = window.console.error || function () {};
+window.console.log = window.console.log || (() => {});
+window.console.info = window.console.info || (() => {});
+window.console.warn = window.console.warn || (() => {});
+window.console.error = window.console.error || (() => {});
 
 // Disallow using the console (to prevent calls from getting into production code).
-var oldConsoleFunctions = {};
-Object.keys(console).forEach(function (key) {
+const oldConsoleFunctions = {};
+Object.keys(console).forEach(key => {
   if (typeof console[key] === 'function') {
     oldConsoleFunctions[key] = console[key];
-    console[key] = function () {
-      for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-        args[_key2] = arguments[_key2];
-      }
-
+    console[key] = (...args) => {
       // Detect karma logging to console.error by looking at the stack trace.
-      if (key === 'error' && new Error().stack.match(/KarmaReporter\.specDone/)) {
+      if (
+        key === 'error' &&
+        new Error().stack.match(/KarmaReporter\.specDone/)
+      ) {
         return;
       }
 
@@ -103,12 +92,18 @@ Object.keys(console).forEach(function (key) {
       }
 
       // Don't fail on messages from webpack-dev-server.
-      if (args[0].startsWith && (args[0].startsWith('[HMR]') || args[0].startsWith('[WDS]'))) {
+      if (
+        args[0].startsWith &&
+        (args[0].startsWith('[HMR]') || args[0].startsWith('[WDS]'))
+      ) {
         return;
       }
 
       caughtError = true;
-      oldConsoleFunctions[key].call(console, "Don't log to console during Jasmine test runs.");
+      oldConsoleFunctions[key].call(
+        console,
+        "Don't log to console during Jasmine test runs."
+      );
       oldConsoleFunctions[key].apply(console, args);
     };
   }
@@ -116,13 +111,13 @@ Object.keys(console).forEach(function (key) {
 
 // Prints tests to console if `?loadConsoleReporter=true` is set; useful for debugging.
 if (window.location.search.match('loadConsoleReporter=true')) {
-  var consoleReporter = {
-    specStarted: function specStarted(result) {
-      oldConsoleFunctions.log('Spec started: ' + result.fullName);
+  const consoleReporter = {
+    specStarted(result) {
+      oldConsoleFunctions.log(`Spec started: ${result.fullName}`);
     },
-    specDone: function specDone(result) {
-      oldConsoleFunctions.log('Spec done: ' + result.fullName);
-    }
+    specDone(result) {
+      oldConsoleFunctions.log(`Spec done: ${result.fullName}`);
+    },
   };
   jasmine.getEnv().addReporter(consoleReporter);
 }
@@ -133,15 +128,13 @@ window.afterTestCallbacks = [];
 
 // It's important that this is the very first `beforeEach`, because it will be
 // run at the very beginning.
-var numberOfElementsInBody = void 0; // To make sure tests don't leave elements in <body>.
-beforeEach(function () {
+let numberOfElementsInBody; // To make sure tests don't leave elements in <body>.
+beforeEach(() => {
   numberOfElementsInBody = document.body.childElementCount;
   jasmine.Ajax.requests.reset();
   jasmine.Ajax.stubs.reset();
 
-  window.beforeTestCallbacks.forEach(function (callback) {
-    return callback();
-  });
+  window.beforeTestCallbacks.forEach(callback => callback());
 
   if (caughtError) {
     caughtError = false;
@@ -151,7 +144,7 @@ beforeEach(function () {
 
 // It's important that this is the very first `afterEach`, because it will be
 // run at the very end.
-afterEach(function () {
+afterEach(() => {
   jasmine.Ajax.requests.reset();
   jasmine.Ajax.stubs.reset();
 
@@ -164,13 +157,13 @@ afterEach(function () {
   jasmine.clock().tick(1000000);
   jasmine.clock().tick(1000000);
 
-  window.afterTestCallbacks.forEach(function (callback) {
-    return callback();
-  });
+  window.afterTestCallbacks.forEach(callback => callback());
 
   if (caughtError) {
     caughtError = false;
-    fail('Caught error during or after test. Open the console to see more details.');
+    fail(
+      'Caught error during or after test. Open the console to see more details.'
+    );
   }
   if (jasmine.Ajax.requests.count() > 0) {
     fail('Requests were made after the test.');
@@ -179,19 +172,22 @@ afterEach(function () {
     fail('Stubs were set after the test.');
   }
   if (document.body.childElementCount !== numberOfElementsInBody) {
-    fail('Expected <body> to contain only ' + numberOfElementsInBody + ' elements ' + ('but it contained ' + document.body.childElementCount + '. Forgot to clean up?'));
+    fail(
+      `Expected <body> to contain only ${numberOfElementsInBody} elements ` +
+        `but it contained ${document.body
+          .childElementCount}. Forgot to clean up?`
+    );
   }
 
   // Make sure a good Promise polyfill/library is used.
-  var promiseResolved = false;
-  new window.Promise(function (resolve) {
+  let promiseResolved = false;
+  new window.Promise(resolve => {
     resolve();
-  }).then(function () {
-    return promiseResolved = true;
-  });
+  }).then(() => (promiseResolved = true));
   jasmine.clock().tick(1);
   if (!promiseResolved) {
-    fail('window.Promise does not get resolved when calling `jasmine.clock.tick(1)`, be sure to use a Promise polyfill that uses setTimeout like https://github.com/taylorhakes/promise-polyfill, and load it after loading remix-jasmine-setup.');
+    fail(
+      'window.Promise does not get resolved when calling `jasmine.clock.tick(1)`, be sure to use a Promise polyfill that uses setTimeout like https://github.com/taylorhakes/promise-polyfill, and load it after loading remix-jasmine-setup.'
+    );
   }
 });
-
