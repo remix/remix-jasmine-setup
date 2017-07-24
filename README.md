@@ -14,7 +14,7 @@ import 'remix-jasmine-setup';
 
 Be sure that at this point [`jasmine`](https://github.com/jasmine/jasmine) and [`jasmine-ajax`](https://github.com/jasmine/jasmine-ajax) have been loaded.
 
-You can also use the compiled [`index.dist.js`](index.dist.js) version, e.g. in a `<script>` tag.
+You can also use the compiled [`index.js`](index.js) in a `<script>` tag.
 
 **IMPORTANT:** Make sure that this setup is included *before* any polyfills! Otherwise those polyfills may not get the
 stubbed handles to things like `window.setTimeout`. You might need to change your [Babel](https://babeljs.io/) setup to
