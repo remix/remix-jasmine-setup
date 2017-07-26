@@ -47,7 +47,7 @@ We set up Jasmine to do a bunch of things:
     useful for tracking down problems.
   - Adding `beforeTestCallbacks` and `afterTestCallbacks` arrays that can be used in application code to add some
     global state cleanup or assertions, and having them guaranteed to be called at the right times (as opposed to
-    `beforeEach`/`afterEach`, which may be called to early or too late).
+    `beforeEach`/`afterEach`, which may be called too early or too late).
 
 ## Future
 
