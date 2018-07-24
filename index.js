@@ -92,12 +92,10 @@ Object.keys(console).forEach(function (key) {
         args[_key2] = arguments[_key2];
       }
 
-      // Detect karma logging to console.error by looking at the stack trace.
-      if (key === 'error') {
-        var error = new Error();
-        if (error.stack && error.stack.match(/KarmaReporter\.specDone/)) {
-          return;
-        }
+      // Detect karma reporter logging to console by looking at the stack trace.
+      var error = new Error();
+      if (error.stack && error.stack.match(/KarmaReporter\.specDone/)) {
+        return;
       }
 
       // Don't fail tests when React shamelessly self-promotes.
