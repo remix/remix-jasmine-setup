@@ -172,8 +172,9 @@ afterEach(() => {
   if (document.body.childElementCount !== numberOfElementsInBody) {
     fail(
       `Expected <body> to contain only ${numberOfElementsInBody} elements ` +
-        `but it contained ${document.body
-          .childElementCount}. Forgot to clean up?`
+        `but it contained ${
+          document.body.childElementCount
+        }. Forgot to clean up?`
     );
   }
 
