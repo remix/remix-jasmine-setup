@@ -28,7 +28,7 @@
   },
   "peerDependencies": {
     "jasmine-ajax": "3",
-    "jasmine-core": "2"
+    "jasmine-core": ">=2.0.0"
   },
   "devDependencies": {
     "babel-cli": "*",
